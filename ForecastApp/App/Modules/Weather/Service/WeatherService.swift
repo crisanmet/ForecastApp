@@ -32,13 +32,13 @@ struct WeatherService: WeatherFetching {
                         let response = try decoder.decode(WeatherResponse.self, from: data)
                         onComplete(response)
                     }else {
-                        onError("eror")
+                        onError(ApiError.noWeatherData.errorDescription!)
                     }
                 } catch {
-                    onError("error")
+                    onError(ApiError.noWeatherData.errorDescription!)
                 }
-            case .failure(let error):
-                onError(error.localizedDescription)
+            case .failure(_):
+                onError(ApiError.noWeatherData.errorDescription!)
             }
         }
     }
