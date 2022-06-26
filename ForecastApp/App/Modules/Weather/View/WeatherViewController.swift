@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Lottie
 
 class WeatherViewController: UIViewController {
 
@@ -46,7 +47,7 @@ class WeatherViewController: UIViewController {
     
     private let cityName: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 60, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 40, weight: .bold)
         label.textColor = .black
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
@@ -58,7 +59,7 @@ class WeatherViewController: UIViewController {
     
     private var temperatureString: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 45, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 35, weight: .bold)
         label.textColor = .black
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
@@ -70,7 +71,7 @@ class WeatherViewController: UIViewController {
     
     private var celsiusString: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 45, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 35, weight: .semibold)
         label.textColor = .black
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
@@ -86,11 +87,17 @@ class WeatherViewController: UIViewController {
         return image
     }()
     
+    lazy var animationIcon: AnimationView = {
+        let animation = AnimationView()
+        return animation
+    }()
+    
 
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.getWeatherData(cityName: "Buenos Aires")
 
         view.backgroundColor = .white
         setupView()
@@ -98,32 +105,32 @@ class WeatherViewController: UIViewController {
     
 
     private func setupView(){
-        [cityName,weatherIcon].forEach{view.addSubview($0)}
+        [cityName].forEach{view.addSubview($0)}
         
-        let stack = UIStackView(arrangedSubviews: [locationButton,searchTextField, searchButton])
-        stack.axis = .horizontal
-        stack.spacing = 2
-        stack.alignment = .fill
-        stack.distribution = .fillProportionally
-        view.addSubview(stack)
-        stack.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor)
+        let stackSearchBar = UIStackView(arrangedSubviews: [locationButton,searchTextField, searchButton])
+        stackSearchBar.axis = .horizontal
+        stackSearchBar.spacing = 2
+        stackSearchBar.alignment = .fill
+        stackSearchBar.distribution = .fillProportionally
+        view.addSubview(stackSearchBar)
+        stackSearchBar.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, right: view.rightAnchor)
         
-        cityName.anchor(top: stack.bottomAnchor, paddingTop: 20)
+        cityName.anchor(top: stackSearchBar.bottomAnchor, paddingTop: 20)
         cityName.centerX(inView: view)
         
-        weatherIcon.anchor(top: cityName.bottomAnchor)
-        weatherIcon.setDimensions(height: 120, width: 120)
-        weatherIcon.centerX(inView: view)
         
         let stackTemperature = UIStackView(arrangedSubviews: [temperatureString, celsiusString])
         stackTemperature.axis = .horizontal
-        stack.spacing = 2
-        stack.alignment = .center
-        view.addSubview(stackTemperature)
-        stackTemperature.anchor(top: weatherIcon.bottomAnchor)
-        stackTemperature.centerX(inView: view)
+        stackSearchBar.spacing = 2
         
-        
+        let stackIconAndTemperature = UIStackView(arrangedSubviews: [animationIcon, stackTemperature])
+        stackIconAndTemperature.axis = .horizontal
+        stackIconAndTemperature.spacing = 2
+        stackIconAndTemperature.alignment = .center
+        animationIcon.setDimensions(height: 120, width: 120)
+        view.addSubview(stackIconAndTemperature)
+        stackIconAndTemperature.anchor(top: cityName.bottomAnchor)
+        stackIconAndTemperature.centerX(inView: view)
     }
    
 
@@ -138,6 +145,9 @@ extension WeatherViewController: WeatherViewModelDelegate {
             self?.cityName.text = weather.cityName
             self?.temperatureString.text = weather.temperatureString
             self?.weatherIcon.image = UIImage(systemName: weather.conditionName)?.withTintColor(.black, renderingMode: .alwaysOriginal)
+            self?.animationIcon.animation = Animation.named(weather.lottieAnimation)
+            self?.animationIcon.loopMode = .loop
+            self?.animationIcon.play()
         }
     }
     func didFailGettingWeatherData(error: String) {

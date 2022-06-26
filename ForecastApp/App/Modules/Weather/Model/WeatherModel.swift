@@ -75,4 +75,46 @@ struct WeatherModel {
               return "sun.max.fill"
           }
     }
+    var lottieAnimation: String {
+        switch icon {
+         case "01d":
+             return "dayClearSky"
+         case "01n":
+             return "nightClearSky"
+         case "02d":
+             return "dayFewClouds"
+         case "02n":
+             return "nightFewClouds"
+         case "03d":
+             return "dayScatteredClouds"
+         case "03n":
+             return "nightScatteredClouds"
+         case "04d":
+             return "dayBrokenClouds"
+         case "04n":
+             return "nightBrokenClouds"
+         case "09d":
+             return "dayShowerRains"
+         case "09n":
+             return "nightShowerRains"
+         case "10d":
+             return "dayRain"
+         case "10n":
+             return "nightRain"
+         case "11d":
+             return "dayThunderstorm"
+         case "11n":
+             return "nightThunderstorm"
+         case "13d":
+             return "daySnow"
+         case "13n":
+             return "nightSnow"
+         case "50d":
+             return "dayClearSky"
+         case "50n":
+             return "dayClearSky"
+         default:
+             return "dayClearSky"
+         }
+    }
 }

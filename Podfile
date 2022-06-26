@@ -8,6 +8,7 @@ target 'ForecastApp' do
   # Pods for ForecastApp
 
 pod 'Alamofire'
+pod 'lottie-ios'
 
   target 'ForecastAppTests' do
     inherit! :search_paths
