@@ -8,7 +8,7 @@
 import Foundation
 
 protocol WeatherFetching{
-    func fetchWeather(onComplete: @escaping (WeatherResponse) ->(), onError: @escaping (String) ->(), cityName: String)
+    func fetchWeather(cityName: String, onComplete: @escaping (WeatherResponse) -> (), onError: @escaping (String) -> ()) 
 }
 
 struct WeatherService: WeatherFetching {
@@ -19,9 +19,12 @@ struct WeatherService: WeatherFetching {
     private let apiKey = ProcessInfo.processInfo.environment["APIKey"]!
     
     
-    func fetchWeather(onComplete: @escaping (WeatherResponse) -> (), onError: @escaping (String) -> (), cityName: String) {
+    func fetchWeather(cityName: String, onComplete: @escaping (WeatherResponse) -> (), onError: @escaping (String) -> ()) {
         
-        let url = baseURL + buildQueryString(cityName)
+        let cityWithoutSpaces = cityName.replacingOccurrences(of: " ", with: "%20")
+        let url = baseURL + buildQueryString(cityWithoutSpaces)
+        
+        print(url)
         
         APIManager.shared.get(url: url) { response in
             switch response {
@@ -36,6 +39,7 @@ struct WeatherService: WeatherFetching {
                     }
                 } catch {
                     onError(ApiError.noWeatherData.errorDescription!)
+                    debugPrint(error)
                 }
             case .failure(_):
                 onError(ApiError.noWeatherData.errorDescription!)
