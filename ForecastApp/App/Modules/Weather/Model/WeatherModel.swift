@@ -19,6 +19,7 @@ struct WeatherModel {
     let longitude: Double
     let latitude: Double
     let description: String
+    let windSpeed: Double
     
     
     var temperatureString: String{
@@ -26,11 +27,15 @@ struct WeatherModel {
     }
     
     var maxTemperatureString: String{
-        return String(format: "%.1f", maxTemp)
+        return String(format: "%.0f", maxTemp)
     }
     
     var minTemperatureString: String{
-        return String(format: "%.1f", minTemp)
+        return String(format: "%.0f", minTemp)
+    }
+    
+    var windSpeedString: String {
+        return String(format: "%.1f", windSpeed)
     }
     
     var conditionName: String {

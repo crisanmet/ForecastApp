@@ -92,6 +92,95 @@ class WeatherViewController: UIViewController {
         return animation
     }()
     
+    private var weatherDescription: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .black
+        label.numberOfLines = 1
+        label.lineBreakMode = .byWordWrapping
+        label.adjustsFontSizeToFitWidth = true
+        label.sizeToFit()
+        return label
+    }()
+    
+    private var maxTemperature: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .black
+        label.numberOfLines = 1
+        label.lineBreakMode = .byWordWrapping
+        label.adjustsFontSizeToFitWidth = true
+        label.sizeToFit()
+        return label
+    }()
+    
+    private var minTemperature: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .black
+        label.numberOfLines = 1
+        label.lineBreakMode = .byWordWrapping
+        label.adjustsFontSizeToFitWidth = true
+        label.sizeToFit()
+        return label
+    }()
+    
+    private var humidityIcon: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(systemName: "humidity.fill")?.withTintColor(.red, renderingMode: .alwaysOriginal)
+        image.contentMode = .scaleAspectFit
+        image.setDimensions(height: 30, width: 30)
+        return image
+    }()
+    
+    private var humidityLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .black
+        label.numberOfLines = 1
+        label.lineBreakMode = .byWordWrapping
+        label.adjustsFontSizeToFitWidth = true
+        label.sizeToFit()
+        return label
+    }()
+    
+    private var windIcon: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(systemName: "wind")?.withTintColor(.green, renderingMode: .alwaysOriginal)
+        image.contentMode = .scaleAspectFit
+        image.setDimensions(height: 30, width: 30)
+        return image
+    }()
+    
+    private var windLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .black
+        label.numberOfLines = 1
+        label.lineBreakMode = .byWordWrapping
+        label.adjustsFontSizeToFitWidth = true
+        label.sizeToFit()
+        return label
+    }()
+    
+    private var pressureIcon: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(systemName: "thermometer")?.withTintColor(.blue, renderingMode: .alwaysOriginal)
+        image.contentMode = .scaleAspectFit
+        image.setDimensions(height: 30, width: 30)
+        return image
+    }()
+    
+    private var pressureLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .black
+        label.numberOfLines = 1
+        label.lineBreakMode = .byWordWrapping
+        label.adjustsFontSizeToFitWidth = true
+        label.sizeToFit()
+        return label
+    }()
 
     //MARK: - Lifecycle
     
@@ -105,6 +194,8 @@ class WeatherViewController: UIViewController {
     
 
     private func setupView(){
+        
+        //view.backgroundColor = .systemBlue
         [cityName].forEach{view.addSubview($0)}
         
         let stackSearchBar = UIStackView(arrangedSubviews: [locationButton,searchTextField, searchButton])
@@ -123,14 +214,56 @@ class WeatherViewController: UIViewController {
         stackTemperature.axis = .horizontal
         stackSearchBar.spacing = 2
         
-        let stackIconAndTemperature = UIStackView(arrangedSubviews: [animationIcon, stackTemperature])
+        let stackMaxAndMinTemperature = UIStackView(arrangedSubviews: [maxTemperature, minTemperature])
+        stackMaxAndMinTemperature.axis = .horizontal
+        stackMaxAndMinTemperature.spacing = 2
+        
+        let stackWeatherDescription = UIStackView(arrangedSubviews: [stackTemperature, weatherDescription, stackMaxAndMinTemperature])
+        stackWeatherDescription.axis = .vertical
+        stackWeatherDescription.spacing = 2
+        
+        let stackIconAndTemperature = UIStackView(arrangedSubviews: [animationIcon, stackWeatherDescription])
         stackIconAndTemperature.axis = .horizontal
         stackIconAndTemperature.spacing = 2
-        stackIconAndTemperature.alignment = .center
+        stackIconAndTemperature.alignment = .leading
         animationIcon.setDimensions(height: 120, width: 120)
         view.addSubview(stackIconAndTemperature)
         stackIconAndTemperature.anchor(top: cityName.bottomAnchor)
         stackIconAndTemperature.centerX(inView: view)
+        
+        let stackHumidity = UIStackView(arrangedSubviews: [humidityIcon, humidityLabel])
+        stackHumidity.axis = .vertical
+        stackHumidity.spacing = 2
+        stackHumidity.alignment = .center
+        stackHumidity.setDimensions(height: 80, width: 100)
+        stackHumidity.backgroundColor = .lightGray
+        
+        let stackWind = UIStackView(arrangedSubviews: [windIcon, windLabel])
+        stackWind.axis = .vertical
+        stackWind.spacing = 2
+        stackWind.setDimensions(height: 80, width: 100)
+        stackWind.alignment = .center
+        stackWind.backgroundColor = .lightGray
+        
+        
+        let stackPressure = UIStackView(arrangedSubviews: [pressureIcon, pressureLabel])
+        stackPressure.axis = .vertical
+        stackPressure.spacing = 2
+        stackPressure.setDimensions(height: 80, width: 100)
+        stackPressure.alignment = .center
+        stackPressure.backgroundColor = .lightGray
+        
+       
+        
+        
+        let stackHumidityWindPressure = UIStackView(arrangedSubviews: [stackHumidity, stackWind, stackPressure])
+        stackHumidityWindPressure.axis = .horizontal
+        stackHumidityWindPressure.spacing = 50
+        stackHumidityWindPressure.alignment = .leading
+        view.addSubview(stackHumidityWindPressure)
+        stackHumidityWindPressure.anchor(top: stackIconAndTemperature.bottomAnchor, paddingTop: 10)
+        stackHumidityWindPressure.centerX(inView: view)
+
     }
    
 
@@ -144,7 +277,13 @@ extension WeatherViewController: WeatherViewModelDelegate {
         DispatchQueue.main.async { [weak self] in
             self?.cityName.text = weather.cityName
             self?.temperatureString.text = weather.temperatureString
-            self?.weatherIcon.image = UIImage(systemName: weather.conditionName)?.withTintColor(.black, renderingMode: .alwaysOriginal)
+            self?.weatherDescription.text = weather.description.capitalized
+            self?.maxTemperature.text = "H:\(weather.maxTemperatureString)°"
+            self?.minTemperature.text = "L:\(weather.minTemperatureString)°"
+//            self?.weatherIcon.image = UIImage(systemName: weather.conditionName)?.withTintColor(.black, renderingMode: .alwaysOriginal)
+            self?.humidityLabel.text = "\(weather.humidity)%"
+            self?.windLabel.text = "\(weather.windSpeedString) Km/h"
+            self?.pressureLabel.text = "\(weather.pressure) hPa"
             self?.animationIcon.animation = Animation.named(weather.lottieAnimation)
             self?.animationIcon.loopMode = .loop
             self?.animationIcon.play()
