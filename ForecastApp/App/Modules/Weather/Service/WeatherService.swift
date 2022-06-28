@@ -8,7 +8,7 @@
 import Foundation
 
 protocol WeatherFetching{
-    func fetchWeather(cityName: String, onComplete: @escaping (WeatherResponse) -> (), onError: @escaping (String) -> ()) 
+    func fetchWeather(cityName: String, getLocation: Bool , lat: Double, long: Double, onComplete: @escaping (WeatherResponse) -> (), onError: @escaping (String) -> ())
 }
 
 struct WeatherService: WeatherFetching {
@@ -19,12 +19,9 @@ struct WeatherService: WeatherFetching {
     private let apiKey = ProcessInfo.processInfo.environment["APIKey"]!
     
     
-    func fetchWeather(cityName: String, onComplete: @escaping (WeatherResponse) -> (), onError: @escaping (String) -> ()) {
+    func fetchWeather(cityName: String, getLocation: Bool = false, lat: Double = 0.0, long: Double = 0.0,  onComplete: @escaping (WeatherResponse) -> (), onError: @escaping (String) -> ()) {
         
-        let cityWithoutSpaces = cityName.replacingOccurrences(of: " ", with: "%20")
-        let url = baseURL + buildQueryString(cityWithoutSpaces)
-        
-        print(url)
+        let url = buildQueryString(cityName: cityName, getLocation: getLocation, lat: lat, long: long)
         
         APIManager.shared.get(url: url) { response in
             switch response {
@@ -48,9 +45,15 @@ struct WeatherService: WeatherFetching {
     }
     
     
-    private func buildQueryString(_ cityName: String) -> String{
-        
-        return "appid=\(apiKey)&units=metric&q=\(cityName)"
-       }
+    private func buildQueryString(cityName: String = "", getLocation: Bool = false, lat: Double = 0.0, long: Double = 0.0 ) -> String{
     
+        let cityWithoutSpaces = cityName.replacingOccurrences(of: " ", with: "%20")
+        var queryString = "\(baseURL)appid=\(apiKey)&units=metric&q=\(cityWithoutSpaces)"
+        
+        if getLocation {
+            queryString = "\(baseURL)appid=\(apiKey)&units=metric&lat=\(lat)&lon=\(long)"
+        }
+        print(queryString)
+        return queryString
+       }
 }

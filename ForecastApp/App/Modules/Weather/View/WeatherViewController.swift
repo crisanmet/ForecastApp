@@ -7,6 +7,7 @@
 
 import UIKit
 import Lottie
+import MapKit
 
 class WeatherViewController: UIViewController {
 
@@ -18,9 +19,10 @@ class WeatherViewController: UIViewController {
         return weatherViewModel
     }()
     
-    private var locationButton: UIButton = {
+    lazy var locationButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "location.circle.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(WeatherViewController.locationPressed(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -181,17 +183,47 @@ class WeatherViewController: UIViewController {
         label.sizeToFit()
         return label
     }()
+    
+    lazy var collectionViewHour: UICollectionView = {
+            let layout = UICollectionViewFlowLayout()
+            layout.scrollDirection = .horizontal
+            let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+            collectionView.showsHorizontalScrollIndicator = false
+            collectionView.register(HourlyWeatherCollectionViewCell.self, forCellWithReuseIdentifier: HourlyWeatherCollectionViewCell.identifier)
+            collectionView.delegate = self
+            collectionView.dataSource = self
+            collectionView.backgroundColor = .white
+            //collectionView.isPagingEnabled = true
+            return collectionView
+        }()
+    
+    //MARK: - mapkit
+    
+    private var mapView: MKMapView = {
+        let map = MKMapView()
+        map.overrideUserInterfaceStyle = .dark
+        return map
+    }()
+    
+    let locationManager = CLLocationManager()
 
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.getWeatherData(cityName: "Buenos Aires")
+        //viewModel.getWeatherData(cityName: "Buenos Aires")
 
         view.backgroundColor = .white
+        setupConfigurationServices()
         setupView()
+        
     }
     
+    private func setupConfigurationServices(){
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+    }
 
     private func setupView(){
         
@@ -253,9 +285,6 @@ class WeatherViewController: UIViewController {
         stackPressure.alignment = .center
         stackPressure.backgroundColor = .lightGray
         
-       
-        
-        
         let stackHumidityWindPressure = UIStackView(arrangedSubviews: [stackHumidity, stackWind, stackPressure])
         stackHumidityWindPressure.axis = .horizontal
         stackHumidityWindPressure.spacing = 50
@@ -263,9 +292,23 @@ class WeatherViewController: UIViewController {
         view.addSubview(stackHumidityWindPressure)
         stackHumidityWindPressure.anchor(top: stackIconAndTemperature.bottomAnchor, paddingTop: 10)
         stackHumidityWindPressure.centerX(inView: view)
+        
+        view.addSubview(collectionViewHour)
+        collectionViewHour.anchor(top: stackHumidity.bottomAnchor , left: view.leftAnchor, right: view.rightAnchor , paddingTop: 20)
+        collectionViewHour.setHeight(150)
 
+        
+        view.addSubview(mapView)
+        mapView.anchor(top: collectionViewHour.bottomAnchor , left: view.leftAnchor, right: view.rightAnchor , paddingTop: 20)
+        mapView.setHeight(200)
+        
     }
    
+    //MARK: - Helpers
+    
+    @objc func locationPressed(_ sender: UIButton){
+        locationManager.requestLocation()
+    }
 
 }
 
@@ -280,26 +323,33 @@ extension WeatherViewController: WeatherViewModelDelegate {
             self?.weatherDescription.text = weather.description.capitalized
             self?.maxTemperature.text = "H:\(weather.maxTemperatureString)°"
             self?.minTemperature.text = "L:\(weather.minTemperatureString)°"
-//            self?.weatherIcon.image = UIImage(systemName: weather.conditionName)?.withTintColor(.black, renderingMode: .alwaysOriginal)
             self?.humidityLabel.text = "\(weather.humidity)%"
             self?.windLabel.text = "\(weather.windSpeedString) Km/h"
             self?.pressureLabel.text = "\(weather.pressure) hPa"
             self?.animationIcon.animation = Animation.named(weather.lottieAnimation)
             self?.animationIcon.loopMode = .loop
             self?.animationIcon.play()
+            self?.renderLocation(latitude: weather.latitude, longitude: weather.longitude, cityName: weather.cityName)
         }
     }
     func didFailGettingWeatherData(error: String) {
         print(error)
     }
+    
+    func didGetForecastData() {
+        collectionViewHour.reloadData()
+    }
 }
+
+//MARK: - Delegate TextField
 
 extension WeatherViewController: UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let city = searchTextField.text else {return}
         
-        viewModel.getWeatherData(cityName: city)
+        viewModel.getWeatherData(cityname: city)
+        viewModel.getForecastData(cityName: city)
         searchTextField.text = ""
     }
     
@@ -316,5 +366,74 @@ extension WeatherViewController: UITextFieldDelegate {
             return false
         }
     }
+    
+}
+
+//MARK: - Collection Delegate
+
+extension WeatherViewController: UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.frame.width/3.5, height: 100)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return viewModel.getForecastCount()
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyWeatherCollectionViewCell.identifier, for: indexPath) as? HourlyWeatherCollectionViewCell else { return UICollectionViewCell()}
+        
+        cell.configureCell(with: viewModel.getForecastSection(at: indexPath.row))
+
+        return cell
+    }
+}
+
+
+//MARK: - Mapkit
+
+extension WeatherViewController: CLLocationManagerDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+          print("error:: \(error.localizedDescription)")
+     }
+
+     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+         if status == .authorizedWhenInUse {
+             locationManager.requestLocation()
+         }
+     }
+
+     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+
+         if let location = locations.first {
+             manager.stopUpdatingLocation()
+             
+             viewModel.getWeatherData(lat: location.coordinate.latitude, long: location.coordinate.latitude, getLocation: true)
+             renderLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+         }
+
+     }
+    
+    func renderLocation(latitude: CLLocationDegrees, longitude: CLLocationDegrees, cityName: String = "") {
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        
+        let span = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+        
+        let region = MKCoordinateRegion(center: coordinate, span: span)
+        
+        mapView.setRegion(region, animated: true)
+        
+        let pin = MKPointAnnotation()
+        pin.title = cityName
+        pin.coordinate = coordinate
+        mapView.addAnnotation(pin)
+    }
+    
     
 }

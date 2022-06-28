@@ -72,6 +72,11 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
+            key = "forecastURL"
+            value = "https://api.openweathermap.org/data/2.5/forecast?"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
             key = "APIKey"
             value = "06c31693c8b07a87163a0aa50c37e570"
             isEnabled = "YES">
