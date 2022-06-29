@@ -13,6 +13,8 @@ class WeatherViewController: UIViewController {
 
     //MARK: - Properties
     
+    let userDefaults = UserDefaults.standard
+    
     lazy var viewModel: WeatherViewModel = {
         let weatherViewModel = WeatherViewModel()
         weatherViewModel.delegate = self
@@ -55,7 +57,6 @@ class WeatherViewController: UIViewController {
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
         label.sizeToFit()
-        label.text = "Buenos Aires"
         return label
      }()
     
@@ -211,9 +212,9 @@ class WeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //viewModel.getWeatherData(cityName: "Buenos Aires")
 
         view.backgroundColor = .white
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(plusIconPressed))
         setupConfigurationServices()
         setupView()
         
@@ -294,7 +295,7 @@ class WeatherViewController: UIViewController {
         stackHumidityWindPressure.centerX(inView: view)
         
         view.addSubview(collectionViewHour)
-        collectionViewHour.anchor(top: stackHumidity.bottomAnchor , left: view.leftAnchor, right: view.rightAnchor , paddingTop: 20)
+        collectionViewHour.anchor(top: stackHumidity.bottomAnchor , left: view.leftAnchor, right: view.rightAnchor , paddingTop: 20, paddingLeft: 12, paddingRight: 12)
         collectionViewHour.setHeight(150)
 
         
@@ -309,6 +310,26 @@ class WeatherViewController: UIViewController {
     @objc func locationPressed(_ sender: UIButton){
         locationManager.requestLocation()
     }
+    
+    @objc func plusIconPressed(){
+        let addCityVC = AddCityViewController()
+        addCityVC.modalPresentationStyle = .popover
+        present(addCityVC, animated: true)
+    }
+    
+    func getSelectedCityFromStorage(cityName: String){
+        
+        
+        viewModel.getWeatherData(cityname: cityName)
+        viewModel.getForecastData(cityname: cityName)
+        print("elegi")
+    }
+    
+    func saveCitiesInStorage(cityName: String){
+        var cityListarray = userDefaults.object(forKey: "locations") as? [String] ?? [String]()
+        cityListarray.append(cityName)
+        userDefaults.set(cityListarray, forKey: "locations")
+    }
 
 }
 
@@ -318,6 +339,7 @@ class WeatherViewController: UIViewController {
 extension WeatherViewController: WeatherViewModelDelegate {
     func didGetWeatherData(weather: WeatherModel) {
         DispatchQueue.main.async { [weak self] in
+            print(weather)
             self?.cityName.text = weather.cityName
             self?.temperatureString.text = weather.temperatureString
             self?.weatherDescription.text = weather.description.capitalized
@@ -349,7 +371,8 @@ extension WeatherViewController: UITextFieldDelegate {
         guard let city = searchTextField.text else {return}
         
         viewModel.getWeatherData(cityname: city)
-        viewModel.getForecastData(cityName: city)
+        viewModel.getForecastData(cityname: city)
+        saveCitiesInStorage(cityName: city)
         searchTextField.text = ""
     }
     
@@ -378,7 +401,8 @@ extension WeatherViewController: UICollectionViewDelegate,UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.width/3.5, height: 100)
+        let width  = (view.frame.width-20)/4
+        return CGSize(width: width, height: 80)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -414,7 +438,11 @@ extension WeatherViewController: CLLocationManagerDelegate {
          if let location = locations.first {
              manager.stopUpdatingLocation()
              
-             viewModel.getWeatherData(lat: location.coordinate.latitude, long: location.coordinate.latitude, getLocation: true)
+             let latitude = location.coordinate.latitude
+             let longitude = location.coordinate.longitude
+             
+             viewModel.getWeatherData(lat: latitude, long: longitude, getLocation: true)
+             viewModel.getForecastData(lat: latitude, long: longitude, getLocation: true)
              renderLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
          }
 

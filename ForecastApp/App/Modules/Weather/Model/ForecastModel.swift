@@ -54,4 +54,14 @@ struct ForecastModel {
               return "sun.max.fill"
           }
     }
+    
+    var timeString: String {
+        let date = Date(timeIntervalSince1970: TimeInterval(time))
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = DateFormatter.Style.short
+        dateFormatter.dateFormat = "HH:mm"
+        dateFormatter.timeZone = .current
+        let localDate = dateFormatter.string(from: date)
+        return localDate
+    }
 }

@@ -62,6 +62,7 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
     
     public func configureCell(with model: ForecastModel){
         DispatchQueue.main.async { [weak self] in
+            self?.hourLabel.text = model.timeString
             self?.weatherIcon.image = UIImage(systemName: model.conditionName)
             self?.weatherConditionLabel.text = model.text
         }
