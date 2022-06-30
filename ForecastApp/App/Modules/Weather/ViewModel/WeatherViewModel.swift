@@ -64,7 +64,7 @@ class WeatherViewModel{
     
     private func getForecastConditions(_ weather: ForecastResponse){
         for i in 1 ..< 14 {
-            forecastHourlyWeather.append(ForecastModel(time: weather.list[i].dt, text: weather.list[i].weather[0].main, icon: weather.list[i].weather[0].icon))
+            forecastHourlyWeather.append(ForecastModel(time: weather.list[i].dt, text: weather.list[i].weather[0].main, icon: weather.list[i].weather[0].icon, temperature: weather.list[i].main.temp))
             
             self.delegate?.didGetForecastData()
         }

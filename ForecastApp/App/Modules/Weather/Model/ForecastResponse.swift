@@ -27,7 +27,7 @@ struct City: Codable {
 struct List: Codable {
     let dt: Int
     let weather: [Weather]
-    
+    let main: Main
 }
 
 

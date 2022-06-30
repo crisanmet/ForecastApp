@@ -13,7 +13,6 @@ class AddCityViewController: UIViewController {
     
     let userDefaults = UserDefaults.standard
     
-    
     lazy var cityTable: UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
         table.register(CityNameTableViewCell.self, forCellReuseIdentifier: CityNameTableViewCell.identifier)
@@ -91,9 +90,15 @@ extension AddCityViewController: UITableViewDelegate, UITableViewDataSource {
         
         print("click")
         DispatchQueue.main.async { [weak self] in
+
             WeatherVC.getSelectedCityFromStorage(cityName: cityName)
+        
             self?.dismiss(animated: true)
         }
       }
+    
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        return "We only store the last 5 searchs..."
+    }
     
 }

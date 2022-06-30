@@ -23,36 +23,32 @@ class WeatherViewController: UIViewController {
     
     lazy var locationButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "location.circle.fill")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "location.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(WeatherViewController.locationPressed(_:)), for: .touchUpInside)
         return button
     }()
     
     private lazy var searchTextField: UITextField = {
-        let spacer = UIView()
-        spacer.setDimensions(height: 40, width: 12)
-        
         let textField = UITextField()
-        textField.leftView = spacer
-        textField.leftViewMode = .always
         textField.borderStyle = UITextField.BorderStyle.roundedRect
-        textField.textColor = .black
-        textField.placeholder = "Search city..."
+        textField.textColor = .white
+        textField.attributedPlaceholder = NSAttributedString(string: "Search city...", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white.withAlphaComponent(0.3)])
         textField.delegate = self
         textField.setHeight(40)
+        textField.backgroundColor = .lightGray.withAlphaComponent(0.1)
         return textField
     }()
     
     private var searchButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "magnifyingglass")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "magnifyingglass")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         return button
     }()
     
     private let cityName: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 40, weight: .bold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
@@ -63,19 +59,19 @@ class WeatherViewController: UIViewController {
     private var temperatureString: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 35, weight: .bold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
         label.sizeToFit()
-        label.text = "21"
+        //label.text = "21"
         return label
     }()
     
     private var celsiusString: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 35, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
@@ -98,7 +94,7 @@ class WeatherViewController: UIViewController {
     private var weatherDescription: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
@@ -109,7 +105,7 @@ class WeatherViewController: UIViewController {
     private var maxTemperature: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
@@ -120,7 +116,7 @@ class WeatherViewController: UIViewController {
     private var minTemperature: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
@@ -132,14 +128,14 @@ class WeatherViewController: UIViewController {
         let image = UIImageView()
         image.image = UIImage(systemName: "humidity.fill")?.withTintColor(.red, renderingMode: .alwaysOriginal)
         image.contentMode = .scaleAspectFit
-        image.setDimensions(height: 30, width: 30)
+        image.setDimensions(height: 30, width: 40)
         return image
     }()
     
     private var humidityLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
@@ -151,14 +147,14 @@ class WeatherViewController: UIViewController {
         let image = UIImageView()
         image.image = UIImage(systemName: "wind")?.withTintColor(.green, renderingMode: .alwaysOriginal)
         image.contentMode = .scaleAspectFit
-        image.setDimensions(height: 30, width: 30)
+        image.setDimensions(height: 30, width: 40)
         return image
     }()
     
     private var windLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
@@ -170,14 +166,14 @@ class WeatherViewController: UIViewController {
         let image = UIImageView()
         image.image = UIImage(systemName: "thermometer")?.withTintColor(.blue, renderingMode: .alwaysOriginal)
         image.contentMode = .scaleAspectFit
-        image.setDimensions(height: 30, width: 30)
+        image.setDimensions(height: 30, width: 40)
         return image
     }()
     
     private var pressureLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
@@ -186,23 +182,24 @@ class WeatherViewController: UIViewController {
     }()
     
     lazy var collectionViewHour: UICollectionView = {
-            let layout = UICollectionViewFlowLayout()
-            layout.scrollDirection = .horizontal
-            let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-            collectionView.showsHorizontalScrollIndicator = false
-            collectionView.register(HourlyWeatherCollectionViewCell.self, forCellWithReuseIdentifier: HourlyWeatherCollectionViewCell.identifier)
-            collectionView.delegate = self
-            collectionView.dataSource = self
-            collectionView.backgroundColor = .white
-            //collectionView.isPagingEnabled = true
-            return collectionView
-        }()
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.register(HourlyWeatherCollectionViewCell.self, forCellWithReuseIdentifier: HourlyWeatherCollectionViewCell.identifier)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundView = nil
+        collectionView.backgroundColor = .clear
+        return collectionView
+    }()
     
     //MARK: - mapkit
     
     private var mapView: MKMapView = {
         let map = MKMapView()
         map.overrideUserInterfaceStyle = .dark
+        map.layer.cornerRadius = 20
         return map
     }()
     
@@ -212,12 +209,18 @@ class WeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = .white
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(plusIconPressed))
-        setupConfigurationServices()
-        setupView()
         
+        setupConfigurationServices()
+        setupBackgroundView()
+        setupView()
+
+    }
+    
+    private func setupBackgroundView(){
+        let gradient = CAGradientLayer()
+        gradient.frame = self.view.bounds
+        gradient.colors = [UIColor.blue.cgColor, UIColor.white.cgColor]
+        self.view.layer.insertSublayer(gradient, at: 0)
     }
     
     private func setupConfigurationServices(){
@@ -227,8 +230,15 @@ class WeatherViewController: UIViewController {
     }
 
     private func setupView(){
+
+        title = "The Weather App"
+        let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = textAttributes
+        navigationController?.navigationBar.barTintColor = .black
         
-        //view.backgroundColor = .systemBlue
+        let addImage = UIImage(systemName: "plus")?.withRenderingMode(.alwaysOriginal)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: addImage, style: .plain, target: self, action: #selector(plusIconPressed))
+        
         [cityName].forEach{view.addSubview($0)}
         
         let stackSearchBar = UIStackView(arrangedSubviews: [locationButton,searchTextField, searchButton])
@@ -269,14 +279,14 @@ class WeatherViewController: UIViewController {
         stackHumidity.spacing = 2
         stackHumidity.alignment = .center
         stackHumidity.setDimensions(height: 80, width: 100)
-        stackHumidity.backgroundColor = .lightGray
+        stackHumidity.backgroundColor = .clear
         
         let stackWind = UIStackView(arrangedSubviews: [windIcon, windLabel])
         stackWind.axis = .vertical
         stackWind.spacing = 2
         stackWind.setDimensions(height: 80, width: 100)
         stackWind.alignment = .center
-        stackWind.backgroundColor = .lightGray
+        stackWind.backgroundColor = .clear
         
         
         let stackPressure = UIStackView(arrangedSubviews: [pressureIcon, pressureLabel])
@@ -284,7 +294,7 @@ class WeatherViewController: UIViewController {
         stackPressure.spacing = 2
         stackPressure.setDimensions(height: 80, width: 100)
         stackPressure.alignment = .center
-        stackPressure.backgroundColor = .lightGray
+        stackPressure.backgroundColor = .clear
         
         let stackHumidityWindPressure = UIStackView(arrangedSubviews: [stackHumidity, stackWind, stackPressure])
         stackHumidityWindPressure.axis = .horizontal
@@ -300,8 +310,8 @@ class WeatherViewController: UIViewController {
 
         
         view.addSubview(mapView)
-        mapView.anchor(top: collectionViewHour.bottomAnchor , left: view.leftAnchor, right: view.rightAnchor , paddingTop: 20)
-        mapView.setHeight(200)
+        mapView.anchor(top: collectionViewHour.bottomAnchor , left: view.leftAnchor, right: view.rightAnchor , paddingTop: 20, paddingLeft: 12, paddingRight: 12)
+        mapView.setHeight(250)
         
     }
    
@@ -327,6 +337,10 @@ class WeatherViewController: UIViewController {
     
     func saveCitiesInStorage(cityName: String){
         var cityListarray = userDefaults.object(forKey: "locations") as? [String] ?? [String]()
+        
+        if cityListarray.count == 5{
+            cityListarray.removeFirst()
+        }
         cityListarray.append(cityName)
         userDefaults.set(cityListarray, forKey: "locations")
     }
@@ -339,7 +353,6 @@ class WeatherViewController: UIViewController {
 extension WeatherViewController: WeatherViewModelDelegate {
     func didGetWeatherData(weather: WeatherModel) {
         DispatchQueue.main.async { [weak self] in
-            print(weather)
             self?.cityName.text = weather.cityName
             self?.temperatureString.text = weather.temperatureString
             self?.weatherDescription.text = weather.description.capitalized

@@ -11,6 +11,7 @@ struct ForecastModel {
     let time: Int
     let text: String
     let icon: String
+    let temperature: Double
     
     var conditionName: String {
         switch icon {
@@ -64,4 +65,9 @@ struct ForecastModel {
         let localDate = dateFormatter.string(from: date)
         return localDate
     }
+    
+    var temperatureString: String{
+        return String(format: "%.0f", temperature)
+    }
+    
 }

@@ -20,7 +20,7 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
     private var hourLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
@@ -32,7 +32,7 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
     private var weatherConditionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        label.textColor = .black
+        label.textColor = .white
         label.numberOfLines = 1
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
@@ -43,10 +43,10 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-            
-        contentView.backgroundColor = .white
-            
-            
+        
+        contentView.backgroundColor = .clear
+        
+        weatherIcon.setDimensions(height: 30, width: 40)
         let stack = UIStackView(arrangedSubviews: [weatherIcon, hourLabel, weatherConditionLabel])
         stack.axis = .vertical
         stack.spacing = 2
@@ -63,8 +63,8 @@ class HourlyWeatherCollectionViewCell: UICollectionViewCell {
     public func configureCell(with model: ForecastModel){
         DispatchQueue.main.async { [weak self] in
             self?.hourLabel.text = model.timeString
-            self?.weatherIcon.image = UIImage(systemName: model.conditionName)
-            self?.weatherConditionLabel.text = model.text
+            self?.weatherIcon.image = UIImage(systemName: model.conditionName)?.withRenderingMode(.alwaysOriginal)
+            self?.weatherConditionLabel.text = "\(model.temperatureString)°C"
         }
     }
 }
