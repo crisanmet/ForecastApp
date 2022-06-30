@@ -10,7 +10,7 @@ import Lottie
 import MapKit
 
 class WeatherViewController: UIViewController {
-
+    
     //MARK: - Properties
     
     let userDefaults = UserDefaults.standard
@@ -56,7 +56,7 @@ class WeatherViewController: UIViewController {
         label.adjustsFontSizeToFitWidth = true
         label.sizeToFit()
         return label
-     }()
+    }()
     
     private var temperatureString: UILabel = {
         let label = UILabel()
@@ -205,7 +205,7 @@ class WeatherViewController: UIViewController {
     }()
     
     let locationManager = CLLocationManager()
-
+    
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -214,7 +214,7 @@ class WeatherViewController: UIViewController {
         setupConfigurationServices()
         setupBackgroundView()
         setupView()
-
+        
     }
     
     private func setupBackgroundView(){
@@ -229,9 +229,9 @@ class WeatherViewController: UIViewController {
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
     }
-
+    
     private func setupView(){
-
+        
         title = "The Weather App"
         
         let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
@@ -309,14 +309,14 @@ class WeatherViewController: UIViewController {
         view.addSubview(collectionViewHour)
         collectionViewHour.anchor(top: stackHumidity.bottomAnchor , left: view.leftAnchor, right: view.rightAnchor , paddingTop: 20, paddingLeft: 12, paddingRight: 12)
         collectionViewHour.setHeight(150)
-
+        
         
         view.addSubview(mapView)
-        mapView.anchor(top: collectionViewHour.bottomAnchor , left: view.leftAnchor, right: view.rightAnchor , paddingTop: 20, paddingLeft: 12, paddingRight: 12)
+        mapView.anchor(top: collectionViewHour.bottomAnchor , left: view.leftAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, right: view.rightAnchor , paddingTop: 20, paddingLeft: 12, paddingRight: 12)
         mapView.setHeight(250)
         hideUI()
     }
-   
+    
     //MARK: - Helpers
     
     @objc func locationPressed(_ sender: UIButton){
@@ -347,32 +347,32 @@ class WeatherViewController: UIViewController {
     
     func hideUI(){
         [cityName, locationButton, searchTextField, searchButton, temperatureString, celsiusString, cityName, weatherIcon, animationIcon
-        ,weatherDescription, maxTemperature, minTemperature, humidityIcon, humidityLabel, windIcon, windLabel, pressureIcon, pressureLabel,
+         ,weatherDescription, maxTemperature, minTemperature, humidityIcon, humidityLabel, windIcon, windLabel, pressureIcon, pressureLabel,
          collectionViewHour, mapView].forEach{$0.isHidden = true}
     }
     
     func showUI(){
         [cityName, locationButton, searchTextField, searchButton, temperatureString, celsiusString, cityName, weatherIcon, animationIcon
-        ,weatherDescription, maxTemperature, minTemperature, humidityIcon, humidityLabel, windIcon, windLabel, pressureIcon, pressureLabel,
+         ,weatherDescription, maxTemperature, minTemperature, humidityIcon, humidityLabel, windIcon, windLabel, pressureIcon, pressureLabel,
          collectionViewHour, mapView].forEach{$0.isHidden = false}
     }
     
     func showMessageError(message: String){
         let alert = UIAlertController(title: "Fail", message: message, preferredStyle: .alert)
-                
+        
         let actionCancel = UIAlertAction(title: "Ok", style: .default)
         alert.addAction(actionCancel)
-                
+        
         present(alert, animated: true)
     }
-
+    
 }
 
 
 //MARK: - Weather Delegates
 
 extension WeatherViewController: WeatherViewModelDelegate {
-
+    
     
     func didGetWeatherData(weather: WeatherModel) {
         DispatchQueue.main.async { [weak self] in
@@ -405,7 +405,7 @@ extension WeatherViewController: WeatherViewModelDelegate {
         loadingIndicator.startAnimating()
         hideUI()
     }
-
+    
     func hideLoading(){
         loadingIndicator.stopAnimating()
         loadingIndicator.removeFromSuperview()
@@ -417,7 +417,7 @@ extension WeatherViewController: WeatherViewModelDelegate {
 //MARK: - Delegate TextField
 
 extension WeatherViewController: UITextFieldDelegate {
-
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let city = searchTextField.text else {return}
         
@@ -463,7 +463,7 @@ extension WeatherViewController: UICollectionViewDelegate,UICollectionViewDataSo
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyWeatherCollectionViewCell.identifier, for: indexPath) as? HourlyWeatherCollectionViewCell else { return UICollectionViewCell()}
         
         cell.configureCell(with: viewModel.getForecastSection(at: indexPath.row))
-
+        
         return cell
     }
 }
@@ -474,29 +474,29 @@ extension WeatherViewController: UICollectionViewDelegate,UICollectionViewDataSo
 extension WeatherViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-          print("error:: \(error.localizedDescription)")
-     }
-
-     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-         if status == .authorizedWhenInUse {
-             locationManager.requestLocation()
-         }
-     }
-
-     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-
-         if let location = locations.first {
-             manager.stopUpdatingLocation()
-             
-             let latitude = location.coordinate.latitude
-             let longitude = location.coordinate.longitude
-             
-             viewModel.getWeatherData(lat: latitude, long: longitude, getLocation: true)
-             viewModel.getForecastData(lat: latitude, long: longitude, getLocation: true)
-             renderLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-         }
-
-     }
+        print("error:: \(error.localizedDescription)")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse {
+            locationManager.requestLocation()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        if let location = locations.first {
+            manager.stopUpdatingLocation()
+            
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            
+            viewModel.getWeatherData(lat: latitude, long: longitude, getLocation: true)
+            viewModel.getForecastData(lat: latitude, long: longitude, getLocation: true)
+            renderLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        }
+        
+    }
     
     func renderLocation(latitude: CLLocationDegrees, longitude: CLLocationDegrees, cityName: String = "") {
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
