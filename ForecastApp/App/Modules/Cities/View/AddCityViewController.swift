@@ -11,8 +11,6 @@ class AddCityViewController: UIViewController {
     
     //MARK: - Properties
     
-    //let userDefaults = UserDefaults.standard
-    
     lazy var viewModel: CityStorageViewModel = {
         let viewModel = CityStorageViewModel()
         return viewModel
@@ -35,7 +33,7 @@ class AddCityViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool){
           super.viewWillAppear(animated)
-          //cityListArray()
+
           cityTable.reloadData()
       }
 
@@ -43,24 +41,6 @@ class AddCityViewController: UIViewController {
         super.viewDidLayoutSubviews()
         cityTable.frame = view.bounds
     }
-    
-    //MARK: - Helpers
-    
-//    func cityListArray() -> [String]{
-//           let cityListArray = userDefaults.object(forKey: "locations") as? [String] ?? [String]()
-//           return cityListArray
-//    }
-//       
-//    func returnCityFromTableView(_ index: Int) -> String {
-//           let cityListArray = cityListArray()
-//           return cityListArray[index]
-//    }
-//       
-//    func deleteCity(_ delete: Int) -> Void {
-//        var cityListArray = cityListArray()
-//        cityListArray.remove(at: delete)
-//        userDefaults.set(cityListArray, forKey: "locations")
-//    }
 
 }
 
