@@ -53,7 +53,6 @@ struct WeatherService: WeatherFetching {
         if getLocation {
             queryString = "\(baseURL)appid=\(apiKey)&units=metric&lat=\(lat)&lon=\(long)"
         }
-        print(queryString)
         return queryString
        }
 }
