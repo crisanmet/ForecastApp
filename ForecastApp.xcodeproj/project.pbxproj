@@ -41,6 +41,10 @@
 		F62F7AF4286AB65300E43153 /* ForecastService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62F7AF3286AB65300E43153 /* ForecastService.swift */; };
 		F634115C286D433200F41C17 /* LoadingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F634115B286D433200F41C17 /* LoadingState.swift */; };
 		F634115F286D4D5700F41C17 /* CityStorageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F634115E286D4D5700F41C17 /* CityStorageViewModel.swift */; };
+		F6341161286D4EC600F41C17 /* MockForecastServiceFail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6341160286D4EC600F41C17 /* MockForecastServiceFail.swift */; };
+		F6341163286D4F9800F41C17 /* MockForecastServiceSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6341162286D4F9800F41C17 /* MockForecastServiceSuccess.swift */; };
+		F6341166286D50A800F41C17 /* Mock.json in Resources */ = {isa = PBXBuildFile; fileRef = F6341165286D50A800F41C17 /* Mock.json */; };
+		F6341168286D50E800F41C17 /* TestWeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6341167286D50E800F41C17 /* TestWeatherViewModel.swift */; };
 		F68B95A2286BFAB9004EA340 /* AddCityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F68B95A1286BFAB9004EA340 /* AddCityViewController.swift */; };
 		F68B95A4286C03BF004EA340 /* CityNameTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F68B95A3286C03BF004EA340 /* CityNameTableViewCell.swift */; };
 		F6D5F89128673D4E006C6E01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D5F89028673D4E006C6E01 /* AppDelegate.swift */; };
@@ -112,6 +116,10 @@
 		F62F7AF3286AB65300E43153 /* ForecastService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastService.swift; sourceTree = "<group>"; };
 		F634115B286D433200F41C17 /* LoadingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingState.swift; sourceTree = "<group>"; };
 		F634115E286D4D5700F41C17 /* CityStorageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityStorageViewModel.swift; sourceTree = "<group>"; };
+		F6341160286D4EC600F41C17 /* MockForecastServiceFail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockForecastServiceFail.swift; sourceTree = "<group>"; };
+		F6341162286D4F9800F41C17 /* MockForecastServiceSuccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockForecastServiceSuccess.swift; sourceTree = "<group>"; };
+		F6341165286D50A800F41C17 /* Mock.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Mock.json; sourceTree = "<group>"; };
+		F6341167286D50E800F41C17 /* TestWeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWeatherViewModel.swift; sourceTree = "<group>"; };
 		F68B95A1286BFAB9004EA340 /* AddCityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCityViewController.swift; sourceTree = "<group>"; };
 		F68B95A3286C03BF004EA340 /* CityNameTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityNameTableViewCell.swift; sourceTree = "<group>"; };
 		F6D5F88D28673D4E006C6E01 /* ForecastApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForecastApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -299,6 +307,14 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		F6341164286D509500F41C17 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				F6341165286D50A800F41C17 /* Mock.json */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
 		F68B95A5286C09F7004EA340 /* Cities */ = {
 			isa = PBXGroup;
 			children = (
@@ -342,6 +358,7 @@
 		F6D5F88F28673D4E006C6E01 /* ForecastApp */ = {
 			isa = PBXGroup;
 			children = (
+				F6341164286D509500F41C17 /* MockData */,
 				F62C5D832867616900DCB275 /* App */,
 				F6D5F89028673D4E006C6E01 /* AppDelegate.swift */,
 				F6D5F89228673D4E006C6E01 /* SceneDelegate.swift */,
@@ -357,6 +374,9 @@
 			isa = PBXGroup;
 			children = (
 				F6D5F8AA28673D50006C6E01 /* ForecastAppTests.swift */,
+				F6341167286D50E800F41C17 /* TestWeatherViewModel.swift */,
+				F6341160286D4EC600F41C17 /* MockForecastServiceFail.swift */,
+				F6341162286D4F9800F41C17 /* MockForecastServiceSuccess.swift */,
 			);
 			path = ForecastAppTests;
 			sourceTree = "<group>";
@@ -482,6 +502,7 @@
 				F619FEFE28681E9F0053F126 /* dayClearSky.json in Resources */,
 				F619FF0328681E9F0053F126 /* nightRain.json in Resources */,
 				F619FF0028681E9F0053F126 /* nightFewClouds.json in Resources */,
+				F6341166286D50A800F41C17 /* Mock.json in Resources */,
 				F619FF0C28681EA00053F126 /* daySnow.json in Resources */,
 				F619FF0A28681EA00053F126 /* nightBrokenClouds.json in Resources */,
 				F619FF0B28681EA00053F126 /* nightThunderstorm.json in Resources */,
@@ -653,6 +674,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6D5F8AB28673D50006C6E01 /* ForecastAppTests.swift in Sources */,
+				F6341168286D50E800F41C17 /* TestWeatherViewModel.swift in Sources */,
+				F6341161286D4EC600F41C17 /* MockForecastServiceFail.swift in Sources */,
+				F6341163286D4F9800F41C17 /* MockForecastServiceSuccess.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
