@@ -233,11 +233,12 @@ class WeatherViewController: UIViewController {
     private func setupView(){
 
         title = "The Weather App"
+        
         let textAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         navigationController?.navigationBar.titleTextAttributes = textAttributes
         navigationController?.navigationBar.barTintColor = .black
         
-        let addImage = UIImage(systemName: "plus")?.withRenderingMode(.alwaysOriginal)
+        let addImage = UIImage(systemName: "plus")?.withRenderingMode(.alwaysOriginal).withTintColor(.white)
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: addImage, style: .plain, target: self, action: #selector(plusIconPressed))
         
         [cityName].forEach{view.addSubview($0)}
@@ -313,7 +314,7 @@ class WeatherViewController: UIViewController {
         view.addSubview(mapView)
         mapView.anchor(top: collectionViewHour.bottomAnchor , left: view.leftAnchor, right: view.rightAnchor , paddingTop: 20, paddingLeft: 12, paddingRight: 12)
         mapView.setHeight(250)
-        
+        hideUI()
     }
    
     //MARK: - Helpers
@@ -354,7 +355,16 @@ class WeatherViewController: UIViewController {
         [cityName, locationButton, searchTextField, searchButton, temperatureString, celsiusString, cityName, weatherIcon, animationIcon
         ,weatherDescription, maxTemperature, minTemperature, humidityIcon, humidityLabel, windIcon, windLabel, pressureIcon, pressureLabel,
          collectionViewHour, mapView].forEach{$0.isHidden = false}
-}
+    }
+    
+    func showMessageError(message: String){
+        let alert = UIAlertController(title: "Fail", message: message, preferredStyle: .alert)
+                
+        let actionCancel = UIAlertAction(title: "Ok", style: .default)
+        alert.addAction(actionCancel)
+                
+        present(alert, animated: true)
+    }
 
 }
 
@@ -366,6 +376,7 @@ extension WeatherViewController: WeatherViewModelDelegate {
     
     func didGetWeatherData(weather: WeatherModel) {
         DispatchQueue.main.async { [weak self] in
+            self?.saveCitiesInStorage(cityName: weather.cityName)
             self?.cityName.text = weather.cityName
             self?.temperatureString.text = weather.temperatureString
             self?.weatherDescription.text = weather.description.capitalized
@@ -381,7 +392,7 @@ extension WeatherViewController: WeatherViewModelDelegate {
         }
     }
     func didFailGettingWeatherData(error: String) {
-        print(error)
+        showMessageError(message: error)
     }
     
     func didGetForecastData() {
@@ -412,7 +423,6 @@ extension WeatherViewController: UITextFieldDelegate {
         
         viewModel.getWeatherData(cityname: city)
         viewModel.getForecastData(cityname: city)
-        saveCitiesInStorage(cityName: city)
         searchTextField.text = ""
     }
     

@@ -14,7 +14,7 @@ enum ApiError {
 extension ApiError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .noWeatherData : return "Oops! Something went wrong... Try again!"
+        case .noWeatherData : return "Oops! City not found..."
         }
     }
 }

@@ -11,7 +11,12 @@ class AddCityViewController: UIViewController {
     
     //MARK: - Properties
     
-    let userDefaults = UserDefaults.standard
+    //let userDefaults = UserDefaults.standard
+    
+    lazy var viewModel: CityStorageViewModel = {
+        let viewModel = CityStorageViewModel()
+        return viewModel
+    }()
     
     lazy var cityTable: UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
@@ -41,23 +46,21 @@ class AddCityViewController: UIViewController {
     
     //MARK: - Helpers
     
-    func cityListArray() -> [String]{
-           let cityListArray = userDefaults.object(forKey: "locations") as? [String] ?? [String]()
-           return cityListArray
-    }
-       
-    func returnCityFromTableView(_ index: Int) -> String {
-           let cityListArray = cityListArray()
-           return cityListArray[index]
-    }
-       
-    func deleteCity(_ delete: Int) -> Void {
-        var cityListArray = cityListArray()
-        cityListArray.remove(at: delete)
-        userDefaults.set(cityListArray, forKey: "locations")
-        
-        cityTable.reloadData()
-    }
+//    func cityListArray() -> [String]{
+//           let cityListArray = userDefaults.object(forKey: "locations") as? [String] ?? [String]()
+//           return cityListArray
+//    }
+//       
+//    func returnCityFromTableView(_ index: Int) -> String {
+//           let cityListArray = cityListArray()
+//           return cityListArray[index]
+//    }
+//       
+//    func deleteCity(_ delete: Int) -> Void {
+//        var cityListArray = cityListArray()
+//        cityListArray.remove(at: delete)
+//        userDefaults.set(cityListArray, forKey: "locations")
+//    }
 
 }
 
@@ -65,7 +68,7 @@ class AddCityViewController: UIViewController {
 
 extension AddCityViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cityListArray().count
+        return viewModel.cityListArray().count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -73,26 +76,24 @@ extension AddCityViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CityNameTableViewCell.identifier, for: indexPath) as? CityNameTableViewCell else {
                 return UITableViewCell()
              }
-        cell.cityName.text = cityListArray()[indexPath.row]
+        cell.cityName.text = viewModel.cityListArray()[indexPath.row]
         return cell
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            deleteCity(indexPath.row)
+            viewModel.deleteCity(indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
          }
      }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let WeatherVC = WeatherViewController()
-        let cityName = returnCityFromTableView(indexPath.row)
-        
-        print("click")
+        let cityName = viewModel.returnCityFromTableView(indexPath.row)
+    
         DispatchQueue.main.async { [weak self] in
-
             WeatherVC.getSelectedCityFromStorage(cityName: cityName)
-        
             self?.dismiss(animated: true)
         }
       }
