@@ -15,6 +15,8 @@ class WeatherViewController: UIViewController {
     
     let userDefaults = UserDefaults.standard
     
+    var loadingIndicator = UIActivityIndicatorView(style: .large)
+    
     lazy var viewModel: WeatherViewModel = {
         let weatherViewModel = WeatherViewModel()
         weatherViewModel.delegate = self
@@ -64,7 +66,6 @@ class WeatherViewController: UIViewController {
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontSizeToFitWidth = true
         label.sizeToFit()
-        //label.text = "21"
         return label
     }()
     
@@ -329,10 +330,8 @@ class WeatherViewController: UIViewController {
     
     func getSelectedCityFromStorage(cityName: String){
         
-        
         viewModel.getWeatherData(cityname: cityName)
         viewModel.getForecastData(cityname: cityName)
-        print("elegi")
     }
     
     func saveCitiesInStorage(cityName: String){
@@ -344,6 +343,18 @@ class WeatherViewController: UIViewController {
         cityListarray.append(cityName)
         userDefaults.set(cityListarray, forKey: "locations")
     }
+    
+    func hideUI(){
+        [cityName, locationButton, searchTextField, searchButton, temperatureString, celsiusString, cityName, weatherIcon, animationIcon
+        ,weatherDescription, maxTemperature, minTemperature, humidityIcon, humidityLabel, windIcon, windLabel, pressureIcon, pressureLabel,
+         collectionViewHour, mapView].forEach{$0.isHidden = true}
+    }
+    
+    func showUI(){
+        [cityName, locationButton, searchTextField, searchButton, temperatureString, celsiusString, cityName, weatherIcon, animationIcon
+        ,weatherDescription, maxTemperature, minTemperature, humidityIcon, humidityLabel, windIcon, windLabel, pressureIcon, pressureLabel,
+         collectionViewHour, mapView].forEach{$0.isHidden = false}
+}
 
 }
 
@@ -351,6 +362,8 @@ class WeatherViewController: UIViewController {
 //MARK: - Weather Delegates
 
 extension WeatherViewController: WeatherViewModelDelegate {
+
+    
     func didGetWeatherData(weather: WeatherModel) {
         DispatchQueue.main.async { [weak self] in
             self?.cityName.text = weather.cityName
@@ -374,6 +387,20 @@ extension WeatherViewController: WeatherViewModelDelegate {
     func didGetForecastData() {
         collectionViewHour.reloadData()
     }
+    
+    func showLoading(){
+        view.addSubview(loadingIndicator)
+        loadingIndicator.center = view.center
+        loadingIndicator.startAnimating()
+        hideUI()
+    }
+
+    func hideLoading(){
+        loadingIndicator.stopAnimating()
+        loadingIndicator.removeFromSuperview()
+        showUI()
+    }
+    
 }
 
 //MARK: - Delegate TextField

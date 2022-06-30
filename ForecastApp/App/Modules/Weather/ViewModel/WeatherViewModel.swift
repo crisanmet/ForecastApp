@@ -11,10 +11,8 @@ protocol WeatherViewModelDelegate: AnyObject {
     func didGetWeatherData(weather: WeatherModel)
     func didFailGettingWeatherData(error: String)
     func didGetForecastData()
-}
-
-protocol CityViewModelDelegate {
-    func getWeatherData(cityName: String)
+    func showLoading()
+    func hideLoading()
 }
 
 class WeatherViewModel{
@@ -33,24 +31,27 @@ class WeatherViewModel{
     }
     
     func getWeatherData(cityname: String = "", lat: Double = 0.0, long: Double = 0.0, getLocation: Bool = false){
-        print("pasooooo")
+        self.loadingView(.show)
         DispatchQueue.global().async { [ weak self] in
             self?.weatherService.fetchWeather(cityName: cityname, getLocation: getLocation, lat: lat, long: long, onComplete: { weather in
-                print("pasado a model \(weather)")
                 self?.getWeatherModel(weather)
+                self?.loadingView(.hide)
             }, onError: { error in
-                print("pasado a model \(error)")
                 self?.delegate?.didFailGettingWeatherData(error: error)
+                self?.loadingView(.hide)
             })
         }
     }
     
     func getForecastData(cityname: String = "", lat: Double = 0.0, long: Double = 0.0, getLocation: Bool = false){
+        self.loadingView(.show)
         DispatchQueue.global().async { [weak self] in
             self?.forecastService.fetchWeatherHourData(cityName: cityname, getLocation: getLocation, lat: lat, long: long, onComplete: { forecast in
                 self?.getForecastConditions(forecast)
+                self?.loadingView(.hide)
             }, onError: { error in
                 self?.delegate?.didFailGettingWeatherData(error: error)
+                self?.loadingView(.hide)
             })
         }
     }
@@ -58,7 +59,6 @@ class WeatherViewModel{
     private func getWeatherModel(_ weather: WeatherResponse){
         let weather = WeatherModel(conditionId: weather.id, cityName: weather.name,icon: weather.weather[0].icon, temperature: weather.main.temp, maxTemp: weather.main.tempMax, minTemp: weather.main.tempMin, pressure: weather.main.pressure, humidity: weather.main.humidity, longitude: weather.coord.lon, latitude: weather.coord.lat, description: weather.weather[0].weatherDescription, windSpeed: weather.wind.speed)
     
-        print(weather)
         self.delegate?.didGetWeatherData(weather: weather)
     }
     
@@ -76,5 +76,14 @@ class WeatherViewModel{
     
     func getForecastSection(at index:Int) -> ForecastModel{
         return forecastHourlyWeather[index]
+    }
+    
+    func loadingView(_ state: LoadingViewState){
+        switch state {
+        case .show:
+            self.delegate?.showLoading()
+        case .hide:
+            self.delegate?.hideLoading()
+        }
     }
 }
